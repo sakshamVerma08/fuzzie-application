@@ -1,0 +1,3 @@
+Got to learn about Next.js
+Got to learn about Shadcn/UI
+Got to learn about Acternity UI
