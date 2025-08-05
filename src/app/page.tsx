@@ -31,12 +31,13 @@ export default function Home(){
         </div>
       </section>
 
-      <InfiniteMovingCards
-      className="md:mt-[18rem] mt-[-100px]"
+     <InfiniteMovingCards
+     
+        className = "md:mt-[35rem] mt-[-100px]"
         items={clients}
         direction="right"
         speed="slow"
-      />
+     />
 
     </main>
   );
