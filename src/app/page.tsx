@@ -53,9 +53,10 @@ export default function Home(){
       <LampComponent/>
      </section>
 
-     <div className="flex flex-wrap items-center justify-center flex-col md:flex-row gap-8 -mt-72 bg-orange-50">
+     <div className="flex flex-wrap items-center justify-center flex-col md:flex-row gap-8 -mt-72 ">
 
 
+{/*******************   Hobby Card ***************88 */}
       <CardContainer className="inter-var ">
 
           <CardBody className="bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-neutral-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-full md:!w-[350px] h-auto rounded-xl p-6 border ">
@@ -109,6 +110,150 @@ export default function Home(){
 
 
       </CardContainer>
+
+
+{/* **** Plus Card ****************/}
+      <CardContainer className="inter-var">
+        <CardBody className="bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-neutral-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-full md:!w-[350px] h-auto rounded-xl p-6 border ">
+
+
+        <CardItem translateZ="50" className="text-xl font-bold text-neutral-600 dark:text-white">
+          Plus 
+          <h2 className="text-6xl">$30</h2>
+        </CardItem>
+        
+      <CardItem translateZ="60" className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300">
+
+          More access to advanced features and automations.
+         
+          <ul className="my-4 flex flex-col gap-2">
+            <li className="flex items-center gap-2">
+              <CheckIcon/>25 Free automations
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckIcon/>
+              900 tasks per month
+            </li>
+
+            <li className="flex items-center gap-2">
+              <CheckIcon/>
+              Two-step Action
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckIcon/>
+              Expanded Memory & Context
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckIcon/>
+              Smarter Models
+            </li>
+          </ul>
+
+
+          </CardItem>
+
+          
+
+              <div className="flex justify-between items-center mt-8">
+
+            <CardItem translateZ = {20} as = "button" className="px-4 py-2 rounded-xl text-xs font-normal dark:text-white">
+
+               Try now →
+            </CardItem>
+
+            <CardItem translateZ = {20}  as = "button" className="px-4 py-2 rounded-xl bg-black dark:text-black  dark:bg-white text-xs 
+             text-white font-bold  ">
+              
+              Get Started Now
+            </CardItem>
+
+
+          </div>
+
+
+        </CardBody>
+        
+        </CardContainer>
+
+
+        {/********************* Pro Card *********************88 */}
+      <CardContainer className="inter-var">
+        <CardBody className="bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-neutral-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-full md:!w-[350px] h-auto rounded-xl p-6 border ">
+
+
+        <CardItem translateZ="50" className="text-xl font-bold text-neutral-600 dark:text-white">
+          Premium 
+          <h2 className="text-6xl">$200</h2>
+        </CardItem>
+        
+      <CardItem translateZ="60" className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300">
+
+          Get the full experience with all features and automations.
+         
+          <ul className="my-4 flex flex-col gap-2">
+            <li className="flex items-center gap-2">
+              <CheckIcon/>  5000 Free Automations
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckIcon/>
+              10000 tasks per month
+            </li>
+
+            <li className="flex items-center gap-2">
+              <CheckIcon/>
+              Two-step Action
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckIcon/>
+              Expanded Memory & Context
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckIcon/>
+              Smarter Models
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckIcon/>
+              Priority Support
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckIcon/>
+              Custom Integrations
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckIcon/>
+              Dedicated Account Manager
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckIcon/>
+              Advanced Analytics
+            </li>
+          </ul>
+
+
+          </CardItem>
+
+          
+
+              <div className="flex justify-between items-center mt-8">
+
+            <CardItem translateZ = {20} as = "button" className="px-4 py-2 rounded-xl text-xs font-normal dark:text-white">
+
+               Try now →
+            </CardItem>
+
+            <CardItem translateZ = {20}  as = "button" className="px-4 py-2 rounded-xl bg-black dark:text-black  dark:bg-white text-xs 
+             text-white font-bold  ">
+              
+              Get Started Now
+            </CardItem>
+
+
+          </div>
+
+
+        </CardBody>
+        
+        </CardContainer>
      </div>
 
     </main>
