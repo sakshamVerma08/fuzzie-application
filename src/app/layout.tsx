@@ -32,7 +32,7 @@ export default function RootLayout({
         className={`${dmSans.className} ${dmSans.className} antialiased`}
       >
        
-        <ThemeProvider attribute = "class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+        <ThemeProvider attribute = "class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}
         </ThemeProvider>
       </body>
