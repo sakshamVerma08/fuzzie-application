@@ -13,7 +13,33 @@ const CloudinaryButton = (props:Props)=>{
     return (
 <div>
 
-    <CldUploadButton uploadPreset="fuzzie-application" className='cursor-pointer border-2 p-2 rounded-md hover:bg-[#2F006B] hover:text-white hover:border-4'/>
+    <CldUploadButton 
+    uploadPreset={props.uploadPreset} 
+    className={props.className} 
+    
+    onSuccess = {(result,{widget})=>{
+
+        const info = result?.info;
+
+        toast.success("Upload successful",{
+            description: "Image uploaded successfully"
+        });
+
+        if(props.onUploaded){
+            props.onUploaded(info);
+        }
+
+        widget?.close?.();
+
+        
+    }}
+    
+    onError={(err)=>{
+
+        console.log("Cloudinary Upload Error", err);
+        toast.error("Error while uploading image. Try again");
+    }}
+        />
         
 </div>
     );
