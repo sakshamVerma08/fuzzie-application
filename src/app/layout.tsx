@@ -3,6 +3,7 @@ import {DM_Sans} from "next/font/google";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
+import { Toaster } from "@/components/ui/sonner"
 
 const dmSans = DM_Sans({subsets:['latin']});
 
@@ -34,6 +35,7 @@ export default function RootLayout({
        
         <ThemeProvider attribute = "class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
