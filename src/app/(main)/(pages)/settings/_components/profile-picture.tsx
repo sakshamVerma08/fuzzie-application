@@ -1,17 +1,85 @@
 "use client";
-import React, { useState } from 'react'
+
+import React, { useEffect, useState } from 'react'
+import { toast } from "sonner"
+import axios from "axios";
 import CloudinaryButton from './cloudinary-button';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { X } from 'lucide-react';
 
 type Props = {}
 
 const ProfilePicture = (props: Props) => {
+
+  // Checking if the profile image exists in DB or not
+  useEffect(() => {
+
+    const fetchProfileImage = async()=>{
+
+      try{
+        
+      const response = await axios.get("http://localhost:3000/api/v1/getProfileImage");
+
+      if(response.status==200){
+        setPreviewURL(response.data.url);
+      }
+
+    }catch(err){
+      console.error("Error while getting the profile image URL",err);
+
+    }
+
+    }
+
+
+    fetchProfileImage();
+  }, [])
+  
+
     // WIP: When the upload is successful, alert the user that the profile image has been uploaded
     const [previewURL, setPreviewURL] = useState<string|undefined>(undefined);
+
+    const router = useRouter();
+
 
     const handleUploaded = (info?:any)=>{
       const url = info?.seculre_url ?? info?.url;
 
       if(url) setPreviewURL(url);
+      console.log("\nProfile Image URL = ",url);
+    }
+
+
+    const onRemoveProfileImage = async()=>{
+
+      try{
+
+        const response = await axios.post("http://localhost:3000/api/v1/deleteProfileImage",{
+          publicId: JSON.stringify(previewURL)
+        },
+        
+        {
+          headers: {"Content-Type":"application/json"}
+          
+        });
+
+      
+      if(response.status==200){
+        toast.success("Profile Image removed",{
+            description: "Image removed successfully"
+        });
+
+      }
+
+      router.refresh();
+
+      }catch(err){
+        console.log("Error while deleting profile image");
+        console.log(err);
+        toast.error("Something went wrong. Please try again");
+      }
+
     }
 
 
@@ -21,15 +89,18 @@ const ProfilePicture = (props: Props) => {
         <p className='text-lg text-white'>Profile Picture</p>
         <div className="flex h-[30vh] flex-col items-center justify-center">
 
-            <CloudinaryButton uploadPreset = "fuzzie-application" className = "cursor-pointer border-2 p-2 rounded-md hover:bg-[#2F006B] hover:text-white hover:border-4" onUploaded={handleUploaded}/>
-
             {previewURL? (
-              <img
-              src = {previewURL}
-              alt = "Profile preview"
-              className="mt-2 h-28 w-28 rounded-full object-cover"/>
+                
+                <>
+                
+                  <div className='relative h-full w-2/12'>
+                    <img src = {previewURL} alt = "User_image"/>
+                  </div>
+                  <Button variant={"destructive"}  className = "cursor-pointer" onClick={onRemoveProfileImage}><X/>Remove Profile Image</Button>
+                </>
+                
             ) : ( 
-              <div className='mt-2 h-28 w-28 bg-zinc-800/60 rounded-full'/>
+              <CloudinaryButton uploadPreset = "fuzzie-application" className = "cursor-pointer border-2 p-2 rounded-md hover:bg-[#2F006B] hover:text-white hover:border-4"  onUploaded={handleUploaded}/>
             )
             }
         </div>
