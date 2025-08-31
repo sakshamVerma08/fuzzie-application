@@ -43,12 +43,29 @@ const ProfilePicture = (props: Props) => {
     const router = useRouter();
 
 
-    const handleUploaded = (info?:any)=>{
+    const handleUploaded = async (info?:any)=>{
       // Store the url in DB as well.
       const url = info?.seculre_url ?? info?.url;
 
       if(url) setPreviewURL(url);
       console.log("\nProfile Image URL = ",url);
+
+      try{
+
+        const res = await axios.post("http://localhost:3000/api/v1/saveProfileImage",{
+          url: JSON.stringify(url)
+        }, {
+          headers:{"Content-Type":"application/json"}
+        });
+
+        if(res.status==200){
+          toast.success("Profile Image uploaded successfully");
+        }
+
+      }catch(err){
+        console.log("Error while storing profile Image URL in the DB",err);
+        toast.error("Something went wrong. Please try again");
+      }
     }
 
 

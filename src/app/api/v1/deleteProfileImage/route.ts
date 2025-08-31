@@ -1,5 +1,6 @@
 import {NextResponse} from "next/server";
 import {v2 as cloudinary} from "cloudinary";
+import {db} from "../../../../lib/db";
 
 cloudinary.config({
 	
@@ -26,12 +27,21 @@ export async function POST(req: Request){
 		console.log("cloudinary API result = ", result.result);
 
 		if(result.result=="ok"){
-		return NextResponse.json({message:"Profile Image removed successfully"},{status:200});
+			const user = await db.user.findFirst({});
+
+			if(user){
+				await db.user.update({
+					where:{id:user.id},
+					data:{profileImage:null}
+				});
+			}
+
+			return NextResponse.json({message:"Profile Image removed successfully"},{status:200});
 		}
 
-		else if (result.result=="not found"){
-			return NextResponse.json({message:"Cloudinary API error"},{status:400});
-		}
+		
+		return NextResponse.json({message:"Cloudinary API error"},{status:400});
+		
 
 	}catch(err){
 		console.error("Error while deleting image from cloudinary", err);
