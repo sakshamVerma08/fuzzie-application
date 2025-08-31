@@ -37,13 +37,14 @@ const ProfilePicture = (props: Props) => {
   }, [])
   
 
-    // WIP: When the upload is successful, alert the user that the profile image has been uploaded
+    // WIP: When the upload is successful, alert the user that the profile image has been uploaded. Store this previewURL in DB as well. Then, fetch profile image from DB whenever page is reloaded.
     const [previewURL, setPreviewURL] = useState<string|undefined>(undefined);
 
     const router = useRouter();
 
 
     const handleUploaded = (info?:any)=>{
+      // Store the url in DB as well.
       const url = info?.seculre_url ?? info?.url;
 
       if(url) setPreviewURL(url);
@@ -52,6 +53,7 @@ const ProfilePicture = (props: Props) => {
 
 
     const onRemoveProfileImage = async()=>{
+      // Remove the old profile Image url from user DB as well.
 
       try{
 
