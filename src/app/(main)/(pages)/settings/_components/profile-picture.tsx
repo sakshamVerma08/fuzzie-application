@@ -70,7 +70,7 @@ const ProfilePicture = (props: Props) => {
 
 
     const onRemoveProfileImage = async()=>{
-      // Remove the old profile Image url from user DB as well.
+      
 
       try{
 
