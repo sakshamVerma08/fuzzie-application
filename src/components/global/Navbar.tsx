@@ -64,7 +64,7 @@ const Navbar = async() => {
                 // WIP: Wire up User
             }
             
-            <UserButton/>
+            {/* <UserButton/> */}
             <MenuIcon className='md:hidden'/>
         </aside>
     </header>
