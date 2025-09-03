@@ -1,6 +1,7 @@
 import {NextResponse} from "next/server";
 import {v2 as cloudinary} from "cloudinary";
 import {db} from "../../../../lib/db";
+import { currentUser } from "@clerk/nextjs/server";
 
 cloudinary.config({
 	
@@ -13,6 +14,13 @@ export async function POST(req: Request){
 	try{	
 
 		const {publicId} = await req.json();
+		const authUser = await currentUser();
+
+		if(!authUser){
+			return NextResponse.json({message:"Authenticated User doesn't exist on Clerk"}, {status:404});
+
+		}
+
 		if(!publicId){
 			return NextResponse.json({message:"Image URL not found"}, {status:404});
 
@@ -39,7 +47,16 @@ export async function POST(req: Request){
 			return NextResponse.json({message:"Profile Image removed successfully"},{status:200});
 		}
 
-		
+		const dbResponse = await db.user.update({
+			where:{
+				clerkId: authUser.id
+			},
+			data:{
+				profileImage: ''
+			}
+		});
+
+
 		return NextResponse.json({message:"Cloudinary API error"},{status:400});
 		
 

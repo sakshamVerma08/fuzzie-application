@@ -15,6 +15,7 @@ import clsx from 'clsx';
 import { Separator } from "@/components/ui/separator"
 import { BrainCircuit, Database, GitBranch, LucideMousePointerClick } from 'lucide-react';
 import { ModeToggle } from '../global/mode-toggle';
+import { UserButton } from '@clerk/nextjs';
 type Props = {};
 
 const Sidebar = (props:Props) => {
@@ -64,7 +65,7 @@ const Sidebar = (props:Props) => {
           </ul>)}
         </TooltipProvider>
         <Separator />
-        <div className='flex items-center flex-col gap-9 dark:bg-[#353346]/30 py-4 px-2 rounded-full h-56 overflow-scroll border-[1px]'>
+        <div className='flex items-center flex-col gap-9 dark:bg-[#353346]/30 py-4 px-2 rounded-full h-56 overflow-scroll border-[1px] ovrflow-x-hidden'>
 
           <div className='relative dark:bg-[#353346]/70 p-2 rounded-full dark:border-t-[2px] border-[1px] dark:border-t-[#353346]'>
             <LucideMousePointerClick className='dark:text-white' size = {18}/>
@@ -92,6 +93,7 @@ const Sidebar = (props:Props) => {
 
           </div>
 
+          
         </div>
 
 
@@ -101,6 +103,10 @@ const Sidebar = (props:Props) => {
 
         <ModeToggle/>
       </div>
+
+      <div>
+          <UserButton/>
+        </div>
 
     </nav>
   )

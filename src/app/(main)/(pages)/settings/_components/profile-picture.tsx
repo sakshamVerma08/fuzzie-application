@@ -84,6 +84,8 @@ const ProfilePicture = (props: Props) => {
         });
 
       
+
+      
       if(response.status==200){
         toast.success("Profile Image removed",{
             description: "Image removed successfully"

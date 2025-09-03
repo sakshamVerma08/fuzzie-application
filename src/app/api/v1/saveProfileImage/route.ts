@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import {db} from "../../../../lib/db";
+import { currentUser } from "@clerk/nextjs/server";
 
 export async function POST(req:NextRequest){
 
     try{
 
+        const authUser = await currentUser();
+        if(!authUser){
+            return NextResponse.json({message:"Authenticated User doesn't exist on Clerk"}, {status:404});
+
+        }
         const {url} = await req.json();
 
         if(!url){
@@ -14,29 +20,34 @@ export async function POST(req:NextRequest){
         const cleanURL = url.replace(/"/g, '');// Remove any extra quotes ("") because they get encoded as %22, then it gives
         // issues when fetching the image from Cloudinary     
 
-        const user = await db.user.findFirst();
+        const user = await db.user.findFirst({
+            where:{
+                clerkId: authUser.id
+            },
+
+        });
 
 
-        if(user){
-            await db.user.update({
-                where:{id:user.id},
-                data:{profileImage:cleanURL}
-            });
-
+        if(!user){
+            return NextResponse.json({message:"Authenticated User not found in DB"}, {status:404});
         }
-        else{
-            // For now, just create a dummy user
-            await db.user.create({
-                data:{
-                    clerkId:"DummyID",
-                    email:"Dummy1@gmail.com",
-                    name:"Dummy User",
-                    profileImage:cleanURL
-                }
-            });
-        }
+        const dbResponse = await db.user.update({
+            where: {
+                clerkId: authUser.id
+            },
 
-                
+            data:{
+                profileImage: cleanURL
+            }
+        
+        });
+
+        if(!dbResponse){
+            return NextResponse.json({message:"Updating the profileImage failed. Authenticated User not found in DB"}, {status:404});
+        }
+            
+
+                        
 
         return NextResponse.json({message:"Profile Image stored in DB successfully"},{status:200});
 
