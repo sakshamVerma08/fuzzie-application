@@ -15,10 +15,12 @@ import clsx from 'clsx';
 import { Separator } from "@/components/ui/separator"
 import { BrainCircuit, Database, GitBranch, LucideMousePointerClick } from 'lucide-react';
 import { ModeToggle } from '../global/mode-toggle';
-import { UserButton } from '@clerk/nextjs';
+import { UserButton, useUser } from '@clerk/nextjs';
 type Props = {};
 
 const Sidebar = (props:Props) => {
+
+  const {isLoaded, isSignedIn} = useUser();
 
     const pathName = usePathname();
 
@@ -104,9 +106,18 @@ const Sidebar = (props:Props) => {
         <ModeToggle/>
       </div>
 
-      <div>
+
+      {isLoaded? <div>
           <UserButton/>
-        </div>
+        </div> :
+         (
+          
+          <div>
+          User Not signed in right now...
+          
+          </div>
+        )}
+      
 
     </nav>
   )

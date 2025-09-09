@@ -31,6 +31,24 @@ model User {
   Slack                 Slack[]
   connections           Connections[]
   workflows             Workflows[]
+  sessions              Session[]
+}
+
+model Session {
+  id             Int      @id @default(autoincrement())
+  clerkSessionId String   @unique
+  clerkUserId    String
+  status         String // "active", "inactive", "expired"
+  lastActiveAt   DateTime
+  expireAt       DateTime
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now())
+  publicMetadata Json?
+
+  // Relation to your User table
+  user User @relation(fields: [clerkUserId], references: [clerkId])
+
+  @@index([clerkUserId])
 }
 
 model LocalGoogleCredential {

@@ -1,10 +1,14 @@
-import { UserButton } from '@clerk/nextjs'
+'use client';
+import { UserButton, useUser } from '@clerk/nextjs'
 import { MenuIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
-const Navbar = async() => {
+const Navbar = () => {
+
+    const {isLoaded, isSignedIn} = useUser();
+
   return (
     <header className = "fixed right-0 left-0 top-0 flex items-center justify-between z-[100] backdrop-blur-lg bg-black/40 py-4 px-4 border-b-[1px] border-neutral-900 ">
 
@@ -64,7 +68,7 @@ const Navbar = async() => {
                 // WIP: Wire up User
             }
             
-            <UserButton/>
+            {isLoaded? <UserButton/>: null}
             <MenuIcon className='md:hidden'/>
         </aside>
     </header>
