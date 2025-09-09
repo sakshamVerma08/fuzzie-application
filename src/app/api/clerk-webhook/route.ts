@@ -59,27 +59,42 @@ export async function POST(req:NextRequest){
             case "user.created":{
 
                 console.warn("\nUser.created event was called\n");
-                const {id, email_addresses,first_name,image_url} = evt.data;
+                const {id, email_addresses,first_name,last_name,image_url} = evt.data;
 
-                let email = email_addresses[0]?.email_address;
+                let email = email_addresses[0].email_address;
 
-                const dbResponse = await db.user.create({
-                    data:{
-                        clerkId: id,
+                try{
+                    
+                    const dbResponse = await db.user.upsert({
+                    where: {clerkId: id},
+                    update:{
+                        name: `${first_name ?? ' '} ${last_name ?? ''}`,
+
                         email: email,
-                        name: first_name,
+                        profileImage: image_url,
+                    }, 
+
+                    create: {
+
+                        clerkId: id,
+                        name: `${first_name?? ' '} ${last_name ?? ' '}`,
+                        email: email,
                         profileImage: image_url
+
                     }
+                    
                 });
 
-                if(!dbResponse){
-                   throw new Error("Error while creating a new user in DB");
-                }
-
-                console.log("A new user was created in DB successfully ✅");
+            }catch(err){
+                console.error("Error while Signing Up the user", err);
             }
 
-            
+                console.log("A new user was created in DB successfully ✅");
+                break;
+                
+            }
+
+
             case "user.updated":{
 
                 console.warn("\nUser.updated Event was called\n");
@@ -87,44 +102,86 @@ export async function POST(req:NextRequest){
                 // const body = await req.json();
                 const {id,email_addresses, first_name,image_url} = evt.data;
 
-                let email = email_addresses[0]?.email_address
-
-                if(!email){
-                    email = "";
-                    console.warn("Test event sent by clerk without any email");
-                    // return NextResponse.json({message:"Email coudln't be accessed"}, {status:400});
-                }
+                let email = email_addresses[0]?.email_address;
 
                 console.log("Clerk-Webhook endpiont was called ✅")
                 
 
-                const dbResponse = await db.user.upsert({
-                    where: {clerkId: id},
-                    update:{
+                try{
+                    const dbResponse = await db.user.update({
+                    where: { clerkId: id },
+                    data: {
                         email,
-                        name:first_name,
-                        profileImage:image_url
-                    },
-                    create:{
-                        clerkId:id,
-                        email:email,
                         name: first_name,
-                        profileImage:image_url
-
-                    }
+                        profileImage: image_url
+                    },
                 });
-
-                if(!dbResponse){
-                    // console.error("\nDB upsert() error\n");
-                    // return NextResponse.json({message:"Database upsert() error"}, {status:200});
-                    throw new Error("Error while upserting a new user to the DB");
+                }catch(err){
+                    console.error("Error while updating user Info", err);
                 }
 
-                console.log("\nUser was created successfully ✅\n");
-                break;
-                // return NextResponse.json({message:"User updated successfully in Database"},{status:200});
+            console.log("\nUser was created successfully ✅\n");
+            break;
+            // return NextResponse.json({message:"User updated successfully in Database"},{status:200});
                 
                 }
+
+            
+            case "user.deleted":{
+
+                console.warn("\nUser.deleted event is fired\n");
+                const {clerkId} = evt.data;
+                // When i manually delete a user form my Clerk Dashboard, then this will be executed.
+
+                try{
+
+                    await db.$transaction( async (tx)=>{
+
+                            await tx.session.deleteMany({
+                                where:{clerkUserId: clerkId}
+                            });
+
+                            await tx.localGoogleCredential.deleteMany({
+                                where: {id: clerkId}
+                            });
+
+                            await tx.discordWebhook.deleteMany({
+                                where: {id:clerkId}
+                            });
+
+                            await tx.slack.deleteMany({
+                                where: {id: clerkId}
+                            });
+
+                            await tx.notion.deleteMany({
+                                where: {id: clerkId}
+                            });
+
+                            await tx.connections.deleteMany({
+                                where:{id: clerkId}
+                            });
+
+                            await tx.workflows.deleteMany({
+                                where: {id: clerkId}
+                            });
+                        })
+
+                        await db.user.deleteMany({
+                            where: {clerkId: clerkId}
+                        });
+
+                        console.log("\nAll User related Info was wiped off from the DB✅");
+
+                    }catch(err){
+                        console.error("Error while deleting data from DB (while removing user from Clerk Dashboard manually", err);
+                    }
+            }
+
+            // NOTE: There is no way i can guarantee that the user.created event get's executed before the session.created
+            // event because clerk webhooks are asynchronous http requests. I do not want to mix up the logic of creating a 
+            // new user every time the 'session.created' event fires up, because then i will face the 'Unique Constraint //
+            // Error' that i was facing previously. So when this throws an error, it's not an error in my logic, it's a 
+            //basic nature of Webhooks
 
 
             case "session.created":{
@@ -147,31 +204,27 @@ export async function POST(req:NextRequest){
 
                 try{
 
-                    // Ensuring that the User entry which is associated with the Foreign Key in Session ID table exists, so 
-                    // prisma doen't throw a FK error.
-                    /*await db.user.upsert({
-                        where: {clerkId: clerkUserId},
-                        update:{},
-                        create:{
-                            clerkId: clerkUserId, 
-                            email: "",
-                            name: null,
-                            profileImage: null,
-                        }
-                    });
-                    */
+                    
 
-                    await db.session.create({
-                        data:{
-                            clerkSessionId,
-                            clerkUserId,
+                    await db.session.upsert({
+                        where: {clerkSessionId},
+                        update:{ 
                             status: status?? "active",
                             lastActiveAt: new Date(last_active_at),
                             expireAt: new Date(expire_at),
-                            createdAt: created_at? new Date(created_at): new Date(),
-                            updatedAt:updated_at? new Date(updated_at): new Date(),
+                            updatedAt:new Date(updated_at),
                             publicMetadata: public_metadata ?? {}
                         },
+                        create:{
+                            clerkSessionId,
+                            clerkUserId,
+                            status: status ?? "active",
+                            lastActiveAt: new Date(last_active_at),
+                            expireAt: new Date(expire_at),
+                            createdAt: new Date(created_at),
+                            updatedAt: new Date(updated_at),
+                            publicMetadata: public_metadata ?? {}
+                        }
                     });
                     
                 }catch(err){
@@ -183,6 +236,7 @@ export async function POST(req:NextRequest){
                 
             }
 
+             
 
             case "session.ended":{
 
