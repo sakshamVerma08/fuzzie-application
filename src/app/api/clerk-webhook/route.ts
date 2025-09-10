@@ -6,22 +6,26 @@ import { EthernetPort } from "lucide-react";
 import { nextImageLoaderRegex } from "next/dist/build/webpack-config";
 
 
-// type ClerkUserWebhookEvent = {
-//     data:{
-//         id: string;
-//         email_addresses: {
-//             email_address: string
-//         }[];
+function parseClerkTimestamp(ts: unknown): Date | null | undefined {
 
-//         first_name: string | null;
-//         last_name: string | null;
-//         image_url: string | null;
-//     };
+    if(ts == null) return null;
 
-//     object: string;
-//     type: string;
-// }
+    if (typeof ts === "number"){
+        return new Date(ts > 1e12? ts: ts * 1000);
+    }
 
+    if(typeof ts === "string"){
+        const n = Number(ts);
+
+        if(!Number.isNaN(n)){
+            return new Date(n > 1e12 ? n : n*1000);
+        }
+
+        const d = new Date(ts);
+
+        return isNaN(d.getTime()) ? null : d;
+    }
+}
 
 type ClerkUserWebhookEvent = {
     data: any;
@@ -222,10 +226,10 @@ export async function POST(req:NextRequest){
                                 clerkSessionId,
                                 clerkUserId,
                                 status: status ?? "active",
-                                lastActiveAt: new Date(last_active_at),
-                                expireAt: new Date(expire_at),
-                                createdAt: new Date(created_at),
-                                updatedAt: new Date(updated_at),
+                                lastActiveAt: new Date(last_active_at * 1000),
+                                expireAt: new Date(expire_at * 1000),
+                                createdAt: new Date(created_at * 1000),
+                                updatedAt: new Date(updated_at * 1000),
                                 publicMetadata: public_metadata ?? {}
                             }
                         });
@@ -246,9 +250,9 @@ export async function POST(req:NextRequest){
 
                     }   
 
-                break;
-                
+                    
             }
+                break;
 
             }
              
@@ -257,8 +261,8 @@ export async function POST(req:NextRequest){
 
                 console.warn("\n Session.ended event was called\n");
 
-                const {id: clerkSessionId, updated_at} = evt.data;
-
+                let {id: clerkSessionId, updated_at} = evt.data;
+                updated_at = parseClerkTimestamp(updated_at);
 
                 try{
 

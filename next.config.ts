@@ -8,8 +8,20 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors:true
   },
   images:{
-    domains:["res.cloudinary.com"],
+    remotePatterns:[
+      {
+        protocol: "http",
+        hostname: "img.clerk.com"
+      },
+
+      {
+        protocol: "http",
+        hostname: "res.cloudinary.com"
+      }
+    ]
+
   }
+
 };
 
 export default nextConfig;
