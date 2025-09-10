@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import {db} from "../../../../lib/db";
-import { currentUser } from "@clerk/nextjs/server";
-
+import {currentUser } from "@clerk/nextjs/server";
+import { ClerkClient, createClerkClient } from "@clerk/backend";
 export async function POST(req:NextRequest){
 
     try{
+
+        // Instantiating a Custom Clerk Client.
+        const clerkClient = createClerkClient({secretKey: process.env.CLERK_SECRET_KEY});
+        
 
         const authUser = await currentUser();
         if(!authUser){
@@ -31,26 +35,34 @@ export async function POST(req:NextRequest){
         if(!user){
             return NextResponse.json({message:"Authenticated User not found in DB"}, {status:404});
         }
-        const dbResponse = await db.user.update({
-            where: {
-                clerkId: authUser.id
-            },
 
-            data:{
-                profileImage: cleanURL
-            }
         
-        });
+        const [dbResponse,clerkResponse] = await Promise.all([
 
-        if(!dbResponse){
-            return NextResponse.json({message:"Updating the profileImage failed. Authenticated User not found in DB"}, {status:404});
-        }
+            //1. Save in db
+            await db.user.update({
+                where: {clerkId: authUser.id},
+                data:{
+                    profileImage:cleanURL
+                }
+            }),
+
+            //2. Save in Clerk (for <UserButton/> Component) 
+            clerkClient.users.updateUser(authUser.id,{
+                profileImageID: cleanURL
+            })
+        
             
+        ]);
 
-                        
+        if(!dbResponse || !clerkResponse){
+            return NextResponse.json({message:"Error while setting image in either DB or clerk"},{status:400});
+        }
 
-        return NextResponse.json({message:"Profile Image stored in DB successfully"},{status:200});
+                         
 
+        return NextResponse.json({message:"Profile Image stored in DB & Clerk successfully"},{status:200});
+        
 
     }catch(err){
         console.error("Error while saving profile Image in DB", err);

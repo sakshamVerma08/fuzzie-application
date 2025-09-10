@@ -1,7 +1,8 @@
+import { currentUser} from "@clerk/nextjs/server";
 import {db} from "../../../../lib/db";
 import { NextRequest, NextResponse } from "next/server";
+import { User } from "@prisma/client";
 
-/*
 export async function GET(req: NextRequest){
 
     // gotta get the url from DB , check whether it's null or not. If not, then return it at the frontend.
@@ -10,7 +11,16 @@ export async function GET(req: NextRequest){
     // WIP: Use the authUser() , something like this, here, this auth User is gonna come after clerk operations become successful.
     try{
 
-        const user = await db.user.findFirst({});
+        const authUser: any = await currentUser();
+
+        if(!authUser){
+            return NextResponse.json({message:"No authenticated user found by Clerk"},{status: 401});
+        }
+
+        const user: User | null = await db.user.findFirst({
+            where: {clerkId:authUser.id },
+            select:{profileImage:true}
+        });
 
         if(!user){
             return NextResponse.json({message:'User not found'},{status:404});
@@ -30,4 +40,3 @@ export async function GET(req: NextRequest){
     }
 
 };
-*/

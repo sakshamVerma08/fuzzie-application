@@ -201,41 +201,56 @@ export async function POST(req:NextRequest){
 
                 } = evt.data;
 
+                const maxRetries = 5;
+                const retryDelayMs = 1000;
 
-                try{
+                for (let attempt = 0; attempt < maxRetries; attempt ++){
 
-                    
+                    try{
 
-                    await db.session.upsert({
-                        where: {clerkSessionId},
-                        update:{ 
-                            status: status?? "active",
-                            lastActiveAt: new Date(last_active_at),
-                            expireAt: new Date(expire_at),
-                            updatedAt:new Date(updated_at),
-                            publicMetadata: public_metadata ?? {}
-                        },
-                        create:{
-                            clerkSessionId,
-                            clerkUserId,
-                            status: status ?? "active",
-                            lastActiveAt: new Date(last_active_at),
-                            expireAt: new Date(expire_at),
-                            createdAt: new Date(created_at),
-                            updatedAt: new Date(updated_at),
-                            publicMetadata: public_metadata ?? {}
+                        
+                        await db.session.upsert({
+                            where: {clerkSessionId},
+                            update:{ 
+                                status: status?? "active",
+                                lastActiveAt: new Date(last_active_at),
+                                expireAt: new Date(expire_at),
+                                updatedAt:new Date(updated_at),
+                                publicMetadata: public_metadata ?? {}
+                            },
+                            create:{
+                                clerkSessionId,
+                                clerkUserId,
+                                status: status ?? "active",
+                                lastActiveAt: new Date(last_active_at),
+                                expireAt: new Date(expire_at),
+                                createdAt: new Date(created_at),
+                                updatedAt: new Date(updated_at),
+                                publicMetadata: public_metadata ?? {}
+                            }
+                        });
+                        
+                    }catch(err: any){
+                        if(err.code === 'P2003'){
+
+                            if(attempt < maxRetries-1){
+                                await new Promise(res=>setTimeout(res,retryDelayMs));
+                            }
+
+                            else{
+                                console.error("Failed to upsert session after multiple retries.", err);
+                                throw err;
+                            }
                         }
-                    });
-                    
-                }catch(err){
-                    console.error("Error while Signing in (session.created) event", err);
+                        console.error("Error while Signing in (session.created) event", err);
 
-                }   
+                    }   
 
                 break;
                 
             }
 
+            }
              
 
             case "session.ended":{
@@ -251,7 +266,7 @@ export async function POST(req:NextRequest){
                         where:{clerkSessionId},
                         data:{
                             status: "expired",
-                            updatedAt: updated_at ?? new Date(updated_at),
+                            updatedAt:new Date(updated_at),
                         }
                     });
 
@@ -261,21 +276,21 @@ export async function POST(req:NextRequest){
                     console.error("Error while ending the session (session.ended) event", err);
 
                 }
-
                 break;
             }
+            
 
             default: {
                 console.warn("\nUnhandled Event Type: ",evt.type);
             }
                 
+            }
+
+            return NextResponse.json({message:"Auth Successful"},{status:200});
+
         }
-
-        return NextResponse.json({message:"Event handled Gracefully"}, {status:200});
-
         
-
-    }catch(err){
+        catch(err){
         console.log("Error while executing code of /api/clerk-webhook route.ts file",err);
         return NextResponse.json({message:"Internal Server Error"}, {status:500});
     }

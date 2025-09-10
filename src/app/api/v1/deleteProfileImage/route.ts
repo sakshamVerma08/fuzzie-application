@@ -1,7 +1,8 @@
 import {NextResponse} from "next/server";
 import {v2 as cloudinary} from "cloudinary";
 import {db} from "../../../../lib/db";
-import { currentUser } from "@clerk/nextjs/server";
+import { clerkClient, createClerkClient, currentUser } from "@clerk/nextjs/server";
+import { nullable } from "zod";
 
 cloudinary.config({
 	
@@ -15,6 +16,9 @@ export async function POST(req: Request){
 
 		const {publicId} = await req.json();
 		const authUser = await currentUser();
+		// Instantiating a clerk Client
+
+		const clerkClient = createClerkClient({secretKey: process.env.CLERK_SECRET_KEY});
 
 		if(!authUser){
 			return NextResponse.json({message:"Authenticated User doesn't exist on Clerk"}, {status:404});
@@ -31,33 +35,78 @@ export async function POST(req: Request){
 		const finalId = mainPart.split(".")[0];		
 
 		const result = await cloudinary.uploader.destroy(finalId, {invalidate:true});
+		
 
 		console.log("cloudinary API result = ", result.result);
 
 		if(result.result=="ok"){
-			const user = await db.user.findFirst({});
-
-			if(user){
-				await db.user.update({
-					where:{id:user.id},
-					data:{profileImage:null}
+			
+			try{
+					const user = await db.user.findFirst({
+					where: {clerkId: authUser.id}
 				});
+
+			}catch(err){
+				console.error("Error while deleting Profile Image from db", err);
+				return NextResponse.json({message:"Error while deleting Profile Image from db"}, {status: 400});
+			}
+
+				
+			try{
+
+				await db.user.update({
+						where:{clerkId:authUser.id},
+						data:{profileImage:null}
+					});
+				
+
+			}catch(err){
+
+				console.error("Error while deleting Profile Image from db", err);
+				return NextResponse.json({message:"Error while deleting Profile Image from db"}, {status: 400});
+			}
+
+			try{
+				await clerkClient.users.updateUser(authUser.id,{
+					profileImageID: ''
+				});
+			}catch(err){
+				console.error("Error while removing image from Clerk");
+				return NextResponse.json({message:"Error while removing image from Clerk"},{status:400});
 			}
 
 			return NextResponse.json({message:"Profile Image removed successfully"},{status:200});
 		}
 
-		const dbResponse = await db.user.update({
-			where:{
-				clerkId: authUser.id
-			},
-			data:{
-				profileImage: ''
-			}
-		});
+		
+		try{
+			const dbResponse = await db.user.update({
+				where:{
+					clerkId: authUser.id
+				},
+				data:{
+					profileImage: ''
+				}
+			});
 
+		}catch(err){
+			console.error("Error while removing image from DB",err);
 
-		return NextResponse.json({message:"Cloudinary API error"},{status:400});
+			return NextResponse.json({message:"Failed to delete image from DB"},{status:400});
+		}
+
+		try{
+			await clerkClient.users.updateUser(authUser.id,{
+				publicMetadata: {
+					profileImage: ''
+				}
+			});
+		}catch(err){
+			console.error("Error while removing image from Clerk",err);
+			return NextResponse.json({message:"Error while removing image from Clerk"},{status:400});
+		}
+		
+		return NextResponse.json({message:"Image coudln't be removed from cloudinary, but is removed from DB and Clerk"},{status:200});
 		
 
 	}catch(err){

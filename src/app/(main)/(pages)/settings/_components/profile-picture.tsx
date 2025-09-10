@@ -7,28 +7,29 @@ import CloudinaryButton from './cloudinary-button';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
+import { currentUser } from '@clerk/nextjs/server';
 
 type Props = {}
 
 const ProfilePicture = (props: Props) => {
 
-  // Checking if the profile image exists in DB or not
+
   useEffect(() => {
 
-    const fetchProfileImage = async()=>{
+      const fetchProfileImage = async()=>{
 
-      try{
-        
-      const response = await axios.get("http://localhost:3000/api/v1/getProfileImage");
+        try{
+          
+        const response = await axios.get("http://localhost:3000/api/v1/getProfileImage");
 
-      if(response.status==200){
-        setPreviewURL(response.data.url);
+        if(response.status==200){
+          setPreviewURL(response.data.url);
+        }
+
+      }catch(err){
+        console.error("Error while getting the profile image URL",err);
+
       }
-
-    }catch(err){
-      console.error("Error while getting the profile image URL",err);
-
-    }
 
     }
 
@@ -82,8 +83,6 @@ const ProfilePicture = (props: Props) => {
           headers: {"Content-Type":"application/json"}
           
         });
-
-      
 
       
       if(response.status==200){
