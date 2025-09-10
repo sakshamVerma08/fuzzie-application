@@ -85,7 +85,7 @@ export async function POST(req: Request){
 					clerkId: authUser.id
 				},
 				data:{
-					profileImage: ''
+					profileImage: null
 				}
 			});
 
@@ -98,7 +98,7 @@ export async function POST(req: Request){
 		try{
 			await clerkClient.users.updateUser(authUser.id,{
 				publicMetadata: {
-					profileImage: ''
+					profileImage: null
 				}
 			});
 		}catch(err){

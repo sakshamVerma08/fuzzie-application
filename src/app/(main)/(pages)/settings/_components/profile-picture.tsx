@@ -26,6 +26,12 @@ const ProfilePicture = (props: Props) => {
           setPreviewURL(response.data.url);
         }
 
+        if(response.status===404){
+          toast.error("Profile Image not found",{
+            description:"Profile image not found in Database. Please add again"
+          });
+        }
+
       }catch(err){
         console.error("Error while getting the profile image URL",err);
 
@@ -92,7 +98,7 @@ const ProfilePicture = (props: Props) => {
 
       }
 
-      router.refresh();
+      window.location.reload();
 
       }catch(err){
         console.log("Error while deleting profile image");
