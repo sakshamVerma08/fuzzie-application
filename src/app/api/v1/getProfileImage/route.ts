@@ -27,7 +27,7 @@ export async function GET(req: NextRequest){
             return NextResponse.json({message:"User has not uploaded any profile image yet."},{status:404});
         }
 
-        return NextResponse.json({message:"Profile Image fetched successfully", url:profileImageURL}, {status:200},);
+        return NextResponse.json({message:"Profile Image fetched successfully", url:profileImageURL}, {status:200});
 
     }catch(err){
         console.error(err);

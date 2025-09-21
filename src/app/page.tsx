@@ -11,7 +11,7 @@ export default function Home(){
 
   return (
 
-    <main>
+<main>
       
       <Navbar/>
 
@@ -256,6 +256,6 @@ export default function Home(){
         </CardContainer>
      </div>
 
-    </main>
+</main>
   );
 }

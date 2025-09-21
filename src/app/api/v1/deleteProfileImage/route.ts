@@ -97,9 +97,7 @@ export async function POST(req: Request){
 
 		try{
 			await clerkClient.users.updateUser(authUser.id,{
-				publicMetadata: {
-					profileImage: null
-				}
+				profileImageID: ''
 			});
 		}catch(err){
 			console.error("Error while removing image from Clerk",err);

@@ -7,7 +7,7 @@ import CloudinaryButton from './cloudinary-button';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
-import { currentUser } from '@clerk/nextjs/server';
+// import { currentUser } from '@clerk/nextjs/server';
 
 type Props = {}
 

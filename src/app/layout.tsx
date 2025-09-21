@@ -12,6 +12,7 @@ import {
   SignedOut,
   UserButton,
 } from '@clerk/nextjs'
+import ModalProvider from "@/providers/modal-provider";
 const dmSans = DM_Sans({subsets:['latin']});
 
 const geistSans = Geist({
@@ -59,7 +60,11 @@ export default function RootLayout({
           </header>  */}
        
         <ThemeProvider attribute = "class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+          <ModalProvider>
+
           {children}
+
+          </ModalProvider>
           <Toaster />
         </ThemeProvider>
       </body>

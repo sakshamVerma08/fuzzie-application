@@ -23,10 +23,21 @@ const Settings = async(props: Props) => {
     where: {clerkId: authUser.id}
   });
 
-  const handleProfileFormSubmission = ()=>{
+  const handleUserUpdate = async (name: string)=>{
+
     'use server';
 
+    const updatedUser = await db.user.update({
+      where: {
+        clerkId: authUser.id,
+      },
+      data: {
+        name,
+      }
+    });
     
+    return updatedUser;
+
   }
 
   return (
@@ -51,7 +62,7 @@ const Settings = async(props: Props) => {
 
             {user? (
               
-              <ProfileForm user = {user} submitHandler = {handleProfileFormSubmission}/> )
+              <ProfileForm user = {user} onUpdate = {handleUserUpdate}/> )
             
             :( <div> User not found in DB.</div>
             

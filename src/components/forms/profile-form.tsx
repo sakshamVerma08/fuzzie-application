@@ -14,12 +14,12 @@ import { User } from '@prisma/client';
 type Props = {
 
   user: User,
-  submitHandler: ()=>void
+  onUpdate: (name: string)=>Promise<any>
 
 }
 
 
-const ProfileForm = ({submitHandler,user}: Props) => {
+const ProfileForm = ({onUpdate,user}: Props) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const form = useForm<z.infer<typeof EditUserProfileSchema>>({
@@ -38,7 +38,7 @@ const ProfileForm = ({submitHandler,user}: Props) => {
     )=>{
 
       setIsLoading(true);
-      await submitHandler(values.name);
+      await onUpdate(values.name);
       setIsLoading(false);
     }
 
@@ -72,7 +72,11 @@ const ProfileForm = ({submitHandler,user}: Props) => {
 
             <FormControl>
 
-              <Input  placeholder = "Name" {...field}/>
+              <Input
+               {...field}
+                placeholder = "Name"
+              
+               />
 
 
             </FormControl>
@@ -93,9 +97,11 @@ const ProfileForm = ({submitHandler,user}: Props) => {
 
               <FormControl>
 
-                <Input placeholder = "Email..." 
-                type="email"
+                <Input
                 {...field}
+                placeholder = "Email..." 
+                type="email"
+                
                 disabled/>
               </FormControl>
             </FormItem>
