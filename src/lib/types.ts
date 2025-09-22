@@ -1,5 +1,5 @@
 import { ConnectionProviderProps } from "@/providers/connections-provider";
-import {z} from "zod";
+import {string, z} from "zod";
 export const EditUserProfileSchema = z.object({
     email:z.string().email("Required"),
     name:z.string().min(1,"Required")
@@ -25,3 +25,31 @@ export const WorkflowFormSchema = z.object({
     description: z.string().min(1,'Required')
     
 });
+
+export type EditorCanvasTypes = 
+'Email' | 'Condition' | 'AI' | 'Slack' | 'Google Drive' | 'Notion' | 'Custom Webhook' | 'Google Calendar' | 'Trigger' | 'Action' | 'Wait';
+
+
+export type EditorCanvasCardType = {
+
+    title: string,
+    description: string,
+    completed: boolean,
+    current: boolean,
+    metadata: any,
+    type: EditorCanvasTypes,
+
+}
+
+export type EditorNodeType = {
+
+    id: string,
+    type: EditorCanvasCardType['type'],
+    position: {
+        x: number,
+        y: number,
+    },
+
+    data: EditorCanvasCardType,
+
+};

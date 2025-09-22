@@ -38,12 +38,15 @@ const CustomModal = ({title,subHeading,children,defaultOpen}: Props) => {
                 <DrawerTitle className="text-center">
                     {title}
                 </DrawerTitle>
- 
-                <DrawerDescription className="text-center flex flex-col items-center gap-4 h-96 overflow--scroll">
+                
+                {/* Instead of <DrawerDescription></DrawerDescription>, used a div to resolve hydration errors.*/}
+                <div className="text-center flex flex-col items-center gap-4 h-96">
                     {subHeading}
                     {children}
-                </DrawerDescription>
+                </div>
             </DrawerHeader>
+
+            
 
             <DrawerFooter className="flex flex-col gap-4 bg-background border-t-[1px] border-t-muted">
 
