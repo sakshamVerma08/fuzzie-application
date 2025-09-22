@@ -15,7 +15,9 @@ const Page = ({params}: Props) => {
   return (
     <div>
         
-        <EditorProvider/>
+        <EditorProvider>
+            <div></div>
+        </EditorProvider>
     </div>
   )
 }
