@@ -1,6 +1,12 @@
-export default function Loader(){
+import Loader from '@/components/global/loader'
+import React from 'react'
 
-    return <div className="w-full h-full">
-        <div className="flex items-center justify-center w-[1/2] h-[1/2]">Loading...</div>
-    </div>
+type Props = {}
+
+const RootLoader = (props: Props) => {
+  return (
+    <Loader/>
+  )
 }
+
+export default RootLoader;

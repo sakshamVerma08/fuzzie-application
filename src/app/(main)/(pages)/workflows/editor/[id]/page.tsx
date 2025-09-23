@@ -1,7 +1,9 @@
 'use client';
 
+import { ConnectionsProvider } from '@/providers/connections-provider';
 import EditorProvider from '../../../../../../providers/editor-provider';
 import  React, { use } from 'react'
+import EditorCanvas from './_components/editor-canvas';
 // import Page from '../../page';
 
 type Props = {
@@ -16,7 +18,11 @@ const Page = ({params}: Props) => {
     <div>
         
         <EditorProvider>
-            <div></div>
+            <ConnectionsProvider>
+              <>
+              <EditorCanvas/>
+              </>
+            </ConnectionsProvider>
         </EditorProvider>
     </div>
   )
