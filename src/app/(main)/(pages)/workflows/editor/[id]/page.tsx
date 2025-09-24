@@ -15,13 +15,12 @@ const Page = ({params}: Props) => {
     const {id} = use(params);
 
   return (
-    <div>
+    <div className='overflow-y-hidden!'>
         
         <EditorProvider>
             <ConnectionsProvider>
-              <>
-              <EditorCanvas/>
-              </>
+              <div className='h-screen!'><EditorCanvas/></div>
+             
             </ConnectionsProvider>
         </EditorProvider>
     </div>
