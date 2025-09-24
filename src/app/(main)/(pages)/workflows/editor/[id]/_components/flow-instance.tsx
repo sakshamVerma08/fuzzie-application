@@ -8,7 +8,7 @@ import { onCreateNodeEdges, onFlowPublish } from '../_actions/workflow-connectio
 import { toast } from 'sonner';
 
 type Props = {
-    children: any[],
+    children: React.ReactNode,
     edges: any[],
     nodes: any[],
 };

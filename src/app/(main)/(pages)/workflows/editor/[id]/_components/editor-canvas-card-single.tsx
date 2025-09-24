@@ -44,7 +44,7 @@ const EditorCanvasCardSingle = ({data}: {data:EditorCanvasCardType}) => {
                 })
             }
         }}
-        className='relative max-w-[400px] dark:border-muted-foreground/70'>
+        className='relative min-w-[250px] max-w-[400px] w-[300px] dark:border-muted-foreground/70'>
 
             <CardHeader>
 

@@ -1,5 +1,5 @@
 'use client';
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { useState, useCallback } from 'react';
 import { ReactFlow, applyNodeChanges, applyEdgeChanges, addEdge, ReactFlowInstance, NodeChange, EdgeChange, Connection,Node, Edge, Controls, MiniMap, Background } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
@@ -16,6 +16,7 @@ import { usePathname } from 'next/navigation';
 import {v4} from "uuid";
 import { EditorCanvasDefaultCardTypes } from '@/lib/constant';
 import FlowInstance from './flow-instance';
+import EditorCanvasSidebar from './editor-canvas-sidebar';
 // import { Changa_One } from 'next/font/google';
 
 type Props = {};
@@ -102,7 +103,15 @@ const EditorCanvas = (props: Props) => {
       });
     }
 
+
+    useEffect(()=>{
+
+      dispatch({type: 'LOAD_DATA', payload: {edges,elements: nodes}});
+    },[nodes,edges]);
+    
+
     const onDrop = useCallback((event: any)=>{
+
 
       event.preventDefault();
 
@@ -187,7 +196,7 @@ const EditorCanvas = (props: Props) => {
             ) : (
               <ReactFlow
               proOptions={{hideAttribution:true}}
-                className="w-[300px]"
+                className="w-full h-full"
                 onDrop={onDrop}
                 onDragOver={onDragOver}
                 nodes={state.editor.elements}
@@ -249,8 +258,7 @@ const EditorCanvas = (props: Props) => {
             edges={edges}
             nodes={nodes}
           >
-            {/* <EditorCanvasSide nodes={nodes} /> */}
-            <div>Lorem, ipsum dolor.</div>
+            <EditorCanvasSidebar nodes={nodes} />
           </FlowInstance>
        )}
       </ResizablePanel>
