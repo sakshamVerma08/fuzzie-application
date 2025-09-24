@@ -18,6 +18,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { onDragStart } from '@/lib/editor-utils';
+import RenderConnectionAccordion from './render-connections-accordion';
 
 type Props = {
 
@@ -100,7 +101,7 @@ const EditorCanvasSidebar = ({nodes}: Props) => {
                             Account
                         </AccordionTrigger>
 
-                        {/* <AccordionContent>
+                         <AccordionContent>
 
                             {CONNECTIONS.map((connection)=>{
 
@@ -110,7 +111,7 @@ const EditorCanvasSidebar = ({nodes}: Props) => {
                                 connection = {connection}
                                 />
                             })}
-                        </AccordionContent> */}
+                        </AccordionContent> 
 
                     </AccordionItem>
 
