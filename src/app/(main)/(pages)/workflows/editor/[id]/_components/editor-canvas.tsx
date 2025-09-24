@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 import { usePathname } from 'next/navigation';
 import {v4} from "uuid";
 import { EditorCanvasDefaultCardTypes } from '@/lib/constant';
+import FlowInstance from './flow-instance';
 // import { Changa_One } from 'next/font/google';
 
 type Props = {};
@@ -248,7 +249,8 @@ const EditorCanvas = (props: Props) => {
             edges={edges}
             nodes={nodes}
           >
-            <EditorCanvasSide nodes={nodes} />
+            {/* <EditorCanvasSide nodes={nodes} /> */}
+            <div>Lorem, ipsum dolor.</div>
           </FlowInstance>
        )}
       </ResizablePanel>
