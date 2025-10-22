@@ -1,0 +1,22 @@
+
+# Environment Variables
+*.env*
+
+# Dependencies
+node_modules/
+*.log
+npm-debug.log*
+*.swp
+*.local
+
+# Git Files
+.git/
+.gitignore
+
+# DockerFiles
+Dockerfile
+docker-compose.yaml
+
+#Cache/Temp Files
+.cache/
+tmp/
